@@ -1,8 +1,10 @@
 package com.example.demo.Group;
 
+import com.example.demo.User.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 import java.util.Optional;
 
@@ -27,8 +29,10 @@ public class GroupController {
     }
 
     @PostMapping(path = "import")
-    public void importGroup(@RequestBody Group group) {
-        Group group1=new Group(group.getName(),group.getUser());
+    public void importGroup(@Valid @RequestBody GroupDTO groupDTO) {
+        User user=new User();
+        user.setId(groupDTO.getUser_id());
+        Group group1=new Group(groupDTO.getName(),user);
         this.groupService.importGroup(group1);
     }
 
