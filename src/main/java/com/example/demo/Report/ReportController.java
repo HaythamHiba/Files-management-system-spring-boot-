@@ -13,4 +13,5 @@ public class ReportController {
     public ReportController(ReportService reportService) {
         this.reportService = reportService;
     }
+
 }
