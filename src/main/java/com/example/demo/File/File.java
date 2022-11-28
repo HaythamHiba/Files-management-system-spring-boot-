@@ -1,8 +1,11 @@
 package com.example.demo.File;
 
+import Report.Report;
 import com.example.demo.Group.Group;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity(name = "files")
 @Table(
@@ -67,12 +70,25 @@ public class File {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "group.id")
     private Group group;
+    @OneToMany(mappedBy = "file", fetch = FetchType.LAZY, orphanRemoval = true)
+    public List<Report> reportList= new ArrayList<>();
 
-    public File(String name, String url, Group group) {
+    public List<Report> getReportList() {
+        return reportList;
+    }
+
+    public void setReportList(List<Report> reportList) {
+        this.reportList = reportList;
+    }
+
+    public File(String name, String url, String status, Group group, List<Report> reportList) {
         this.name = name;
         this.url = url;
+        this.status = status;
         this.group = group;
+        this.reportList = reportList;
     }
+
     public String getStatus() {
         return status;
     }
