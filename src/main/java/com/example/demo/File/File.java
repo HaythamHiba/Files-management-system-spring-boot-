@@ -1,6 +1,6 @@
 package com.example.demo.File;
 
-import Report.Report;
+import com.example.demo.Report.Report;
 import com.example.demo.Group.Group;
 
 import javax.persistence.*;
