@@ -1,4 +1,4 @@
-package Report;
+package com.example.demo.Report;
 
 import com.example.demo.File.File;
 import com.example.demo.User.User;

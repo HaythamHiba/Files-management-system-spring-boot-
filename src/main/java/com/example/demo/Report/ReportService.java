@@ -1,4 +1,4 @@
-package Report;
+package com.example.demo.Report;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
