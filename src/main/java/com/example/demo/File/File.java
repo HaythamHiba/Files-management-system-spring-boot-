@@ -65,15 +65,7 @@ public class File {
     @Column(name = "url", nullable = false)
     private String url;
 
-    public MultipartFile getFile() {
-        return file;
-    }
 
-    public void setFile(MultipartFile file) {
-        this.file = file;
-    }
-
-    private MultipartFile file;
 
     @Column(name = "status", nullable = false,updatable = true)
     private String status;
