@@ -2,6 +2,7 @@ package com.example.demo.File;
 
 import com.example.demo.Report.Report;
 import com.example.demo.Group.Group;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -63,6 +64,16 @@ public class File {
     private String name;
     @Column(name = "url", nullable = false)
     private String url;
+
+    public MultipartFile getFile() {
+        return file;
+    }
+
+    public void setFile(MultipartFile file) {
+        this.file = file;
+    }
+
+    private MultipartFile file;
 
     @Column(name = "status", nullable = false,updatable = true)
     private String status;

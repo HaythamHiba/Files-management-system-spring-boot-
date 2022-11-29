@@ -11,6 +11,7 @@ import java.util.List;
 @Table(
         name = "groups"
 )
+
 public class Group {
     public Group(){}
     public Long getId() {
