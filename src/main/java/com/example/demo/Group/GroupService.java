@@ -33,11 +33,18 @@ public class GroupService {
         return ResponseHandler.responseBuilder("Ok",HttpStatus.OK,this.groupRepositroy.save(group));
     }
 
-    public ResponseEntity.BodyBuilder addUserToGroup(Long group_id, Long user_id) {
+    public ResponseEntity<Map<String, Object>> addUserToGroup(Long group_id, Long user_id) {
         User user = userRepository.findById(user_id).orElseThrow(() -> new IllegalStateException("No Such User"));
         Group group = groupRepositroy.findById(group_id).orElseThrow(() -> new IllegalStateException("No Such Group"));
-        group.groupUsers.add(user);
+
+
+        if(!group.groupUsers.contains(user)){
+
+            group.groupUsers.add(user);
+        }else throw new IllegalStateException("user is already in group");
+
+
         this.groupRepositroy.save(group);
-        return ResponseEntity.status(HttpStatus.OK);
+        return ResponseHandler.responseBuilder("ok",HttpStatus.OK,null);
     }
 }

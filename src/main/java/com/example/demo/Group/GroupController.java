@@ -38,7 +38,7 @@ public class GroupController {
 
 
     @PostMapping (path = "{group_id}/user/{user_id}")
-    public ResponseEntity.BodyBuilder addUserToGroup(
+    public ResponseEntity<Map<String, Object>> addUserToGroup(
             @PathVariable("group_id") Long group_id,
             @PathVariable("user_id") Long user_id
     ) {
