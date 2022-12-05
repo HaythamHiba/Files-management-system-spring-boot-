@@ -1,7 +1,8 @@
 package com.example.demo.Group;
 
-import com.example.demo.File.File;
+import com.example.demo.GroupFile.GroupFile;
 import com.example.demo.User.User;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -59,16 +60,17 @@ public class Group {
     @Column(name = "id", updatable = false)
     private Long id;
 
-    public List<File> getFileList() {
-        return fileList;
-    }
-
-    public void setFileList(List<File> fileList) {
-        this.fileList = fileList;
-    }
+//    public List<GroupFile> getFileList() {
+//        return fileList;
+//    }
+//
+//    public void setFileList(List<GroupFile> fileList) {
+//        this.fileList = fileList;
+//    }
 
     @Column(name = "name", nullable = false, updatable = false)
     private String name;
+    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user.id")
     private User user;
@@ -79,8 +81,8 @@ public class Group {
             inverseJoinColumns = @JoinColumn(name = "user_id")
     )
     public List<User> groupUsers=new ArrayList<>();
-    @OneToMany(mappedBy = "group", fetch = FetchType.LAZY, orphanRemoval = true)
-    public List<File> fileList= new ArrayList<>();
+//    @OneToMany(mappedBy = "group", fetch = FetchType.LAZY, orphanRemoval = true)
+//    public List<GroupFile> fileList= new ArrayList<>();
     public List<User> getGroupUsers() {
         return groupUsers;
     }

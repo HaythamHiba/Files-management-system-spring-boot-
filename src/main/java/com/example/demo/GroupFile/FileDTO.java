@@ -1,4 +1,4 @@
-package com.example.demo.File;
+package com.example.demo.GroupFile;
 
 import org.springframework.web.multipart.MultipartFile;
 
