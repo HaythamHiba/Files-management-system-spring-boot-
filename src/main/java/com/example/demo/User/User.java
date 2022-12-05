@@ -2,6 +2,7 @@ package com.example.demo.User;
 
 import com.example.demo.Report.Report;
 import com.example.demo.Group.Group;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 
 import javax.persistence.*;
@@ -40,7 +41,6 @@ public class User {
     private List<Group> groupList = new ArrayList<>();
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, orphanRemoval = true)
     public List<Report> reportList= new ArrayList<>();
-
     @ManyToMany(
             mappedBy = "groupUsers"
     )

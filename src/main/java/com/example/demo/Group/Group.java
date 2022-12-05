@@ -2,6 +2,7 @@ package com.example.demo.Group;
 
 import com.example.demo.File.File;
 import com.example.demo.User.User;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -68,9 +69,11 @@ public class Group {
 
     @Column(name = "name", nullable = false, updatable = false)
     private String name;
+    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user.id")
     private User user;
+
     @ManyToMany()
     @JoinTable(
             name="group_user",
