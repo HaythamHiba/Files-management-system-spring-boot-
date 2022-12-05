@@ -3,13 +3,16 @@ package com.example.demo.GroupFile;
 import com.example.demo.Group.Group;
 
 import com.example.demo.Group.GroupRepositroy;
+import com.example.demo.Response.ResponseHandler;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -25,64 +28,65 @@ public class FileService {
     }
 
 
+    private final String path = "C:\\Users\\UsEr\\Desktop\\spring\\src\\static";
 
 
-    private final String path="C:\\Users\\UsEr\\Desktop\\spring\\src\\static";
+    public ResponseEntity<Map<String, Object>> getAll(Long id) {
 
+        Optional<Group> found = groupRepositroy.findById(id);
 
-    public List<GroupFile> getAll(Long id) {
+        try {
+            if (found.isPresent()) {
 
-        Optional<Group> found= groupRepositroy.findById(id);
+                return ResponseHandler.responseBuilder("ok", HttpStatus.OK, fileRepository.findGroupFilesByGroupId(id));
 
-        if(found.isPresent()) {
+            } else throw new IllegalStateException("No Such User");
+        } catch (Exception e) {
+            return ResponseHandler.responseBuilder(e.getMessage(), HttpStatus.FORBIDDEN, null);
 
-            return fileRepository.findGroupFilesByGroupId(id);
-
-        }else throw new IllegalStateException("No Such User");
-
-
-    }
-
-    public void importFileToGroup(MultipartFile fileToImport,Long id) throws IOException {
-
-        String filePath=path+fileToImport.getOriginalFilename();
-
-
-
-       Optional<Group> found= groupRepositroy.findById(id);
-
-        if(found.isPresent()){
-
-            fileRepository.save(
-                    new GroupFile(fileToImport.getOriginalFilename(),fileToImport.getContentType(),filePath,id)
-            );
-
-            fileToImport.transferTo(new File(filePath));
-
-
-
-        }else {
-           throw  new IllegalStateException("No Such User");
         }
 
-
-
-
     }
 
-    public void deleteFile(Long id) {
+    public ResponseEntity<Map<String, Object>> importFileToGroup(MultipartFile fileToImport, Long id) throws IOException {
 
-        Optional<GroupFile>found=this.fileRepository.findById(id);
-        if(found.isPresent()){
-
-           String path=found.get().getPath();
+        String filePath = path + fileToImport.getOriginalFilename();
 
 
+        Optional<Group> found = groupRepositroy.findById(id);
 
-            File file=new File(path);
-            if(file.delete())
-                this.fileRepository.deleteById(id);
-        }else throw  new IllegalStateException("Error in Deleteing File");
+        try {
+            if (found.isPresent()) {
 
+                fileRepository.save(new GroupFile(fileToImport.getOriginalFilename(), fileToImport.getContentType(), filePath, id));
+
+                fileToImport.transferTo(new File(filePath));
+
+            } else {
+                throw new IllegalStateException("No Such User");
+            }
+        } catch (Exception e) {
+            return ResponseHandler.responseBuilder(e.getMessage(), HttpStatus.FORBIDDEN, null);
+        }
+        return ResponseHandler.responseBuilder("OK", HttpStatus.OK, null);
+    }
+
+    public ResponseEntity<Map<String, Object>> deleteFile(Long id) {
+
+        Optional<GroupFile> found = this.fileRepository.findById(id);
+        try {
+            if (found.isPresent()) {
+
+                String path = found.get().getPath();
+
+
+                File file = new File(path);
+                if (file.delete())
+                    this.fileRepository.deleteById(id);
+            } else throw new IllegalStateException("Error in Deleteing File");
+        } catch (Exception e) {
+            return ResponseHandler.responseBuilder(e.getMessage(), HttpStatus.FORBIDDEN, null);
+        }
+        return ResponseHandler.responseBuilder("DELETED", HttpStatus.OK, null);
     }
 }
