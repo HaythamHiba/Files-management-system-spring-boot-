@@ -29,6 +29,16 @@ public class FileController {
         return this.fileService.importFileToGroup(file, id);
     }
 
+    @PostMapping(path = "files/group/check/{id}")
+    public ResponseEntity<Map<String, Object>> checkFile( @PathVariable("id") Long id) throws IOException {
+        return this.fileService.checkFile( id);
+    }
+
+    @PostMapping(path = "files/group/free/{id}")
+    public ResponseEntity<Map<String, Object>> uncheckFile( @PathVariable("id") Long id) throws IOException {
+        return this.fileService.uncheckFile(id);
+    }
+
     @DeleteMapping(path = "files/{id}")
     public ResponseEntity<Map<String, Object>> deleteFile(@PathVariable("id") Long id) {
         return this.fileService.deleteFile(id);

@@ -28,12 +28,14 @@ public class GroupFile {
     private String path;
     @Column(nullable = false)
     private Long groupId;
+    private String fileStatus;
 
-    public GroupFile(String name, String type, String path,Long groupId) {
+    public GroupFile(String name, String type, String path, Long groupId, String fileStatus) {
         this.name = name;
         this.type = type;
         this.path = path;
-        this.groupId=groupId;
+        this.groupId = groupId;
+        this.fileStatus = fileStatus;
     }
 
     public GroupFile() {
@@ -44,5 +46,17 @@ public class GroupFile {
         this.name = name;
         this.type = type;
         this.path = path;
+    }
+
+    @Override
+    public String toString() {
+        return "GroupFile{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", type='" + type + '\'' +
+                ", path='" + path + '\'' +
+                ", groupId=" + groupId +
+                ", fileStatus='" + fileStatus + '\'' +
+                '}';
     }
 }

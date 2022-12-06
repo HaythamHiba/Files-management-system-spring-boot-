@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
+import java.util.Optional;
 
 @Service
 public class GroupService {
@@ -30,7 +31,20 @@ public class GroupService {
     }
 
     public ResponseEntity<Map<String, Object>> importGroup(Group group) {
-        return ResponseHandler.responseBuilder("Ok", HttpStatus.OK, this.groupRepositroy.save(group));
+        try {
+
+            Optional<Group> found=groupRepositroy.findGroupByName(group.getName());
+            if (found.isPresent()){
+                throw new IllegalStateException("name is already taken");
+            }
+            return ResponseHandler.responseBuilder("Ok", HttpStatus.OK, this.groupRepositroy.save(group));
+
+
+        }catch (Exception e){
+            return ResponseHandler.responseBuilder(e.getMessage(), HttpStatus.FORBIDDEN, null);
+
+        }
+
     }
 
     public ResponseEntity<Map<String, Object>> addUserToGroup(Long group_id, Long user_id) {

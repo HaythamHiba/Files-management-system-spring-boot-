@@ -58,7 +58,12 @@ public class FileService {
         try {
             if (found.isPresent()) {
 
-                fileRepository.save(new GroupFile(fileToImport.getOriginalFilename(), fileToImport.getContentType(), filePath, id));
+                fileRepository.save(new GroupFile(fileToImport.getOriginalFilename(),
+                        fileToImport.getContentType(),
+                        filePath,
+                        id,
+                        GroupFileStatus.Free.toString()
+                        ));
 
                 fileToImport.transferTo(new File(filePath));
 
@@ -89,4 +94,49 @@ public class FileService {
         }
         return ResponseHandler.responseBuilder("DELETED", HttpStatus.OK, null);
     }
-}
+
+    public ResponseEntity<Map<String, Object>> checkFile(Long id) {
+
+            Optional<GroupFile> found=this.fileRepository.findById(id);
+        try {
+            if (found.isPresent()) {
+
+                if(found.get().getFileStatus().equals(GroupFileStatus.Checked.toString())){
+
+                    throw new IllegalStateException("File already checked");
+                }else found.get().setFileStatus(GroupFileStatus.Checked.toString());
+
+                fileRepository.save(found.get());
+
+
+
+            } else throw new IllegalStateException("File not found");
+        } catch (Exception e) {
+            return ResponseHandler.responseBuilder(e.getMessage(), HttpStatus.FORBIDDEN, null);
+        }
+
+        return ResponseHandler.responseBuilder("File has been checked",HttpStatus.OK,null);
+    }
+
+    public ResponseEntity<Map<String, Object>> uncheckFile(Long id) {
+
+        Optional<GroupFile> found=this.fileRepository.findById(id);
+        try {
+            if (found.isPresent()) {
+
+                if(found.get().getFileStatus().equals(GroupFileStatus.Free.toString())){
+
+                    throw new IllegalStateException("File is free");
+                }else found.get().setFileStatus(GroupFileStatus.Free.toString());
+
+                fileRepository.save(found.get());
+
+
+
+            } else throw new IllegalStateException("File not found");
+        } catch (Exception e) {
+            return ResponseHandler.responseBuilder(e.getMessage(), HttpStatus.FORBIDDEN, null);
+        }
+
+        return ResponseHandler.responseBuilder("File is free successfully",HttpStatus.OK,null);
+    }}

@@ -1,10 +1,15 @@
 package com.example.demo.Group;
 
+import javax.persistence.Column;
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 
 public class GroupDTO {
     @NotEmpty
+
     private String name;
+
+    @NotNull(message = "user_id is required")
 
     private Long user_id;
 

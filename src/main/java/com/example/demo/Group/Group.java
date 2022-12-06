@@ -68,13 +68,15 @@ public class Group {
 //        this.fileList = fileList;
 //    }
 
-    @Column(name = "name", nullable = false, updatable = false)
+    @Column(name = "name",unique = true, nullable = false, updatable = false)
+
     private String name;
     @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user.id")
     private User user;
 
+    @JsonIgnore
     @ManyToMany()
     @JoinTable(
             name="group_user",
@@ -91,5 +93,15 @@ public class Group {
     public Group(String name, User user) {
         this.name = name;
         this.user = user;
+    }
+
+    @Override
+    public String toString() {
+        return "Group{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+
+
+                '}';
     }
 }
