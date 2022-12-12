@@ -9,9 +9,7 @@ public class GroupDTO {
 
     private String name;
 
-    @NotNull(message = "user_id is required")
 
-    private Long user_id;
 
     public String getName() {
         return name;
@@ -21,19 +19,13 @@ public class GroupDTO {
         this.name = name;
     }
 
-    public Long getUser_id() {
-        return user_id;
-    }
 
-    public void setUser_id(Long user_id) {
-        this.user_id = user_id;
-    }
 
     public GroupDTO() {
     }
 
-    public GroupDTO(@NotEmpty String name, @NotEmpty Long user_id) {
+    public GroupDTO(@NotEmpty String name) {
         this.name = name;
-        this.user_id = user_id;
+
     }
 }

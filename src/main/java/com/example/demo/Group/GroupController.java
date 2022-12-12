@@ -1,6 +1,8 @@
 package com.example.demo.Group;
 
 import com.example.demo.User.User;
+import com.example.demo.base.BaseService;
+import com.example.demo.security.UserDetailsImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -10,7 +12,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping(path = "api/groups")
-public class GroupController {
+public class GroupController extends BaseService {
     private GroupService groupService;
 
     @Autowired
@@ -30,8 +32,10 @@ public class GroupController {
 
     @PostMapping(path = "import")
     public ResponseEntity<Map<String, Object>> importGroup(@Valid @RequestBody GroupDTO groupDTO) {
-        User user=new User();
-        user.setId(groupDTO.getUser_id());
+
+        User user=getUser().getUser();
+
+
         Group group1=new Group(groupDTO.getName(),user);
        return this.groupService.importGroup(group1);
     }

@@ -33,6 +33,7 @@ public class User {
     private Long id;
     @Column(name = "username", updatable = false, nullable = false)
     private String username;
+    @JsonIgnore
     @Column(name = "password", nullable = false, columnDefinition = "TEXT")
     private String password;
     @Column(name = "name", nullable = false)

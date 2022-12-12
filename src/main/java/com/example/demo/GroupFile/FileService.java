@@ -82,6 +82,10 @@ public class FileService {
         try {
             if (found.isPresent()) {
 
+                if(found.get().getFileStatus().equals(GroupFileStatus.Checked)){
+                    throw new IllegalStateException("Can't delete checked file");
+                }
+
                 String path = found.get().getPath();
 
 
