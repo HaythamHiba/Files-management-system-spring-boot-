@@ -123,6 +123,8 @@ public class UserService extends BaseService {
         }
        return ResponseHandler.responseBuilder("OK", HttpStatus.OK, returnArray);
     }
+
+
 }
 
 @Data
@@ -130,6 +132,5 @@ public class UserService extends BaseService {
 class ResponseDto {
     public User user;
     public String token;
-
 
 }

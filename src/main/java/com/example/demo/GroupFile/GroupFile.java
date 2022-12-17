@@ -25,7 +25,17 @@ public class GroupFile {
     private Long id;
     private String name;
     private String type;
+
+    public Long getCheckUserId() {
+        return checkUserId;
+    }
+
+    public void setCheckUserId(Long checkUserId) {
+        this.checkUserId = checkUserId;
+    }
+
     private String path;
+    private Long checkUserId;
     @Column(nullable = false)
     private Long groupId;
     private String fileStatus;

@@ -3,6 +3,7 @@ package com.example.demo.Group;
 import com.example.demo.Response.ResponseHandler;
 import com.example.demo.User.User;
 import com.example.demo.User.UserRepository;
+import com.example.demo.base.BaseService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -16,7 +17,7 @@ import java.util.Optional;
 
 @Service
 @Slf4j
-public class GroupService {
+public class GroupService extends BaseService {
     private final GroupRepositroy groupRepositroy;
     private final UserRepository userRepository;
 
@@ -34,7 +35,11 @@ public class GroupService {
         return ResponseHandler.responseBuilder("ok", HttpStatus.OK, this.groupRepositroy.findById(id));
     }
 
-    public ResponseEntity<Map<String, Object>> importGroup(Group group) {
+    public ResponseEntity<Map<String, Object>> importGroup(GroupDTO groupDTO) {
+        User user = getUser().getUser();
+
+
+        Group group = new Group(groupDTO.getName(), user);
         try {
 
             Optional<Group> found = groupRepositroy.findGroupByName(group.getName());
@@ -42,7 +47,7 @@ public class GroupService {
                 throw new IllegalStateException("name is already taken");
             }
             Group savedGroup = this.groupRepositroy.save(group);
-            this.addUserToGroup(savedGroup.getId(), group.getUser().getId());
+            this.addUserToGroup(savedGroup.getId());
             return ResponseHandler.responseBuilder("Ok", HttpStatus.OK, savedGroup);
 
 
@@ -53,14 +58,22 @@ public class GroupService {
 
     }
 
-    public ResponseEntity<Map<String, Object>> addUserToGroup(Long group_id, Long user_id) {
+    public ResponseEntity<Map<String, Object>> addUserToGroup(Long group_id) {
+
+
         try {
-            User user = userRepository.findById(user_id).orElseThrow(() -> new IllegalStateException("No Such User"));
+            User user = getUser().getUser();
+
+
             Group group = groupRepositroy.findById(group_id).orElseThrow(() -> new IllegalStateException("No Such Group"));
-            if (!group.groupUsers.contains(user)) {
+
+
+            if (!group.getGroupUsers().contains(user)) {
                 group.groupUsers.add(user);
+                this.groupRepositroy.save(group);
             } else throw new IllegalStateException("user is already in group");
-            this.groupRepositroy.save(group);
+
+
             return ResponseHandler.responseBuilder("ok", HttpStatus.OK, null);
         } catch (Exception e) {
             return ResponseHandler.responseBuilder(e.getMessage(), HttpStatus.FORBIDDEN, null);

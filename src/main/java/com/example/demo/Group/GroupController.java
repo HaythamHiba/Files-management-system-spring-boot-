@@ -11,7 +11,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping(path = "api/groups")
-public class GroupController extends BaseService {
+public class GroupController  {
     private GroupService groupService;
 
     @Autowired
@@ -32,20 +32,17 @@ public class GroupController extends BaseService {
     @PostMapping(path = "import")
     public ResponseEntity<Map<String, Object>> importGroup(@Valid @RequestBody GroupDTO groupDTO) {
 
-        User user=getUser().getUser();
 
-
-        Group group1=new Group(groupDTO.getName(),user);
-       return this.groupService.importGroup(group1);
+       return this.groupService.importGroup(groupDTO);
     }
 
 
-    @PostMapping (path = "{group_id}/user/{user_id}")
+    @PostMapping (path = "{group_id}")
     public ResponseEntity<Map<String, Object>> addUserToGroup(
-            @PathVariable("group_id") Long group_id,
-            @PathVariable("user_id") Long user_id
+            @PathVariable("group_id") Long group_id
+
     ) {
-         return this.groupService.addUserToGroup(group_id,user_id);
+         return this.groupService.addUserToGroup(group_id);
     }
 
     @GetMapping (path = "users/{group_id}")

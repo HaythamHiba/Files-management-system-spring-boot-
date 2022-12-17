@@ -4,6 +4,8 @@ import com.example.demo.Group.Group;
 
 import com.example.demo.Group.GroupRepositroy;
 import com.example.demo.Response.ResponseHandler;
+import com.example.demo.User.User;
+import com.example.demo.base.BaseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,7 +18,7 @@ import java.util.Map;
 import java.util.Optional;
 
 @Service
-public class FileService {
+public class FileService extends BaseService {
 
     private final FileRepository fileRepository;
     private final GroupRepositroy groupRepositroy;
@@ -80,9 +82,12 @@ public class FileService {
 
         Optional<GroupFile> found = this.fileRepository.findById(id);
         try {
+            User user=getUser().getUser();
             if (found.isPresent()) {
 
-                if(found.get().getFileStatus().equals(GroupFileStatus.Checked)){
+                if(found.get().getFileStatus().equals(GroupFileStatus.Checked)
+                    && !found.get().getCheckUserId().equals(user.getId())
+                ){
                     throw new IllegalStateException("Can't delete checked file");
                 }
 
@@ -92,7 +97,7 @@ public class FileService {
                 File file = new File(path);
                 if (file.delete())
                     this.fileRepository.deleteById(id);
-            } else throw new IllegalStateException("Error in Deleteing File");
+            } else throw new IllegalStateException("File Not Found!!");
         } catch (Exception e) {
             return ResponseHandler.responseBuilder(e.getMessage(), HttpStatus.FORBIDDEN, null);
         }
@@ -103,15 +108,19 @@ public class FileService {
 
             Optional<GroupFile> found=this.fileRepository.findById(id);
         try {
+            User user=getUser().getUser();
             if (found.isPresent()) {
 
                 if(found.get().getFileStatus().equals(GroupFileStatus.Checked.toString())){
 
                     throw new IllegalStateException("File already checked");
-                }else found.get().setFileStatus(GroupFileStatus.Checked.toString());
+                }else {
 
-                fileRepository.save(found.get());
+                    found.get().setCheckUserId(user.getId());
+                    found.get().setFileStatus(GroupFileStatus.Checked.toString());
 
+                    fileRepository.save(found.get());
+                }
 
 
             } else throw new IllegalStateException("File not found");
@@ -123,6 +132,10 @@ public class FileService {
     }
 
     public ResponseEntity<Map<String, Object>> uncheckFile(Long id) {
+        Long userId=getUser().getUser().getId();
+
+
+
 
         Optional<GroupFile> found=this.fileRepository.findById(id);
         try {
@@ -130,11 +143,17 @@ public class FileService {
 
                 if(found.get().getFileStatus().equals(GroupFileStatus.Free.toString())){
 
-                    throw new IllegalStateException("File is free");
-                }else found.get().setFileStatus(GroupFileStatus.Free.toString());
+                    throw new IllegalStateException("File is Already free");
+                }else {
+                    if(!found.get().getCheckUserId().equals(userId)){
+                        throw new IllegalStateException("Only the user who check the file can free it");
+                    }else{
 
-                fileRepository.save(found.get());
-
+                        found.get().setFileStatus(GroupFileStatus.Free.toString());
+                        found.get().setCheckUserId(null);
+                        fileRepository.save(found.get());
+                    }
+                }
 
 
             } else throw new IllegalStateException("File not found");
