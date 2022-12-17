@@ -3,6 +3,8 @@ package com.example.demo.GroupFile;
 import com.example.demo.Group.Group;
 
 import com.example.demo.Group.GroupRepositroy;
+import com.example.demo.Report.Report;
+import com.example.demo.Report.ReportRepository;
 import com.example.demo.Response.ResponseHandler;
 import com.example.demo.User.User;
 import com.example.demo.base.BaseService;
@@ -14,6 +16,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.time.LocalDate;
+import java.util.Date;
 import java.util.Map;
 import java.util.Optional;
 
@@ -22,6 +26,9 @@ public class FileService extends BaseService {
 
     private final FileRepository fileRepository;
     private final GroupRepositroy groupRepositroy;
+    @Autowired
+    public ReportRepository reportRepository;
+
 
     @Autowired
     public FileService(FileRepository fileRepository, GroupRepositroy groupRepositroy) {
@@ -59,14 +66,17 @@ public class FileService extends BaseService {
 
         try {
             if (found.isPresent()) {
-
-                fileRepository.save(new GroupFile(fileToImport.getOriginalFilename(),
+                Report report = new Report();
+                report.setGroupFile(fileRepository.save(new GroupFile(fileToImport.getOriginalFilename(),
                         fileToImport.getContentType(),
                         filePath,
                         id,
                         GroupFileStatus.Free.toString()
-                        ));
-
+                )));
+                report.setUser(getUser().getUser());
+                report.setType("CREATE");
+                report.setLastModified(LocalDate.now());
+                reportRepository.save(report);
                 fileToImport.transferTo(new File(filePath));
 
             } else {
@@ -82,12 +92,12 @@ public class FileService extends BaseService {
 
         Optional<GroupFile> found = this.fileRepository.findById(id);
         try {
-            User user=getUser().getUser();
+            User user = getUser().getUser();
             if (found.isPresent()) {
 
-                if(found.get().getFileStatus().equals(GroupFileStatus.Checked)
-                    && !found.get().getCheckUserId().equals(user.getId())
-                ){
+                if (found.get().getFileStatus().equals(GroupFileStatus.Checked)
+                        && !found.get().getCheckUserId().equals(user.getId())
+                ) {
                     throw new IllegalStateException("Can't delete checked file");
                 }
 
@@ -106,20 +116,24 @@ public class FileService extends BaseService {
 
     public ResponseEntity<Map<String, Object>> checkFile(Long id) {
 
-            Optional<GroupFile> found=this.fileRepository.findById(id);
+        Optional<GroupFile> found = this.fileRepository.findById(id);
         try {
-            User user=getUser().getUser();
+            User user = getUser().getUser();
             if (found.isPresent()) {
 
-                if(found.get().getFileStatus().equals(GroupFileStatus.Checked.toString())){
+                if (found.get().getFileStatus().equals(GroupFileStatus.Checked.toString())) {
 
                     throw new IllegalStateException("File already checked");
-                }else {
+                } else {
 
                     found.get().setCheckUserId(user.getId());
                     found.get().setFileStatus(GroupFileStatus.Checked.toString());
-
                     fileRepository.save(found.get());
+                    Report report = new Report();
+                    report.setUser(getUser().getUser());
+                    report.setType("CHECK_IN");
+                    report.setLastModified(LocalDate.now());
+                    reportRepository.save(report);
                 }
 
 
@@ -128,30 +142,33 @@ public class FileService extends BaseService {
             return ResponseHandler.responseBuilder(e.getMessage(), HttpStatus.FORBIDDEN, null);
         }
 
-        return ResponseHandler.responseBuilder("File has been checked",HttpStatus.OK,null);
+        return ResponseHandler.responseBuilder("File has been checked", HttpStatus.OK, null);
     }
 
     public ResponseEntity<Map<String, Object>> uncheckFile(Long id) {
-        Long userId=getUser().getUser().getId();
+        Long userId = getUser().getUser().getId();
 
 
-
-
-        Optional<GroupFile> found=this.fileRepository.findById(id);
+        Optional<GroupFile> found = this.fileRepository.findById(id);
         try {
             if (found.isPresent()) {
 
-                if(found.get().getFileStatus().equals(GroupFileStatus.Free.toString())){
+                if (found.get().getFileStatus().equals(GroupFileStatus.Free.toString())) {
 
                     throw new IllegalStateException("File is Already free");
-                }else {
-                    if(!found.get().getCheckUserId().equals(userId)){
+                } else {
+                    if (!found.get().getCheckUserId().equals(userId)) {
                         throw new IllegalStateException("Only the user who check the file can free it");
-                    }else{
+                    } else {
 
                         found.get().setFileStatus(GroupFileStatus.Free.toString());
                         found.get().setCheckUserId(null);
                         fileRepository.save(found.get());
+                        Report report = new Report();
+                        report.setUser(getUser().getUser());
+                        report.setType("CHECK_OUT");
+                        report.setLastModified(LocalDate.now());
+                        reportRepository.save(report);
                     }
                 }
 
@@ -161,5 +178,6 @@ public class FileService extends BaseService {
             return ResponseHandler.responseBuilder(e.getMessage(), HttpStatus.FORBIDDEN, null);
         }
 
-        return ResponseHandler.responseBuilder("File is free successfully",HttpStatus.OK,null);
-    }}
+        return ResponseHandler.responseBuilder("File is free successfully", HttpStatus.OK, null);
+    }
+}

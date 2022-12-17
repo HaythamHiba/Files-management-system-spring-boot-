@@ -1,9 +1,13 @@
 package com.example.demo.GroupFile;
 
 
+import com.example.demo.Group.Group;
+import com.example.demo.Report.Report;
 import lombok.Data;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
 
@@ -39,6 +43,8 @@ public class GroupFile {
     @Column(nullable = false)
     private Long groupId;
     private String fileStatus;
+    @OneToMany(mappedBy = "groupFile", fetch = FetchType.LAZY, orphanRemoval = true)
+    private List<Report> groupFileReport = new ArrayList<>();
 
     public GroupFile(String name, String type, String path, Long groupId, String fileStatus) {
         this.name = name;
