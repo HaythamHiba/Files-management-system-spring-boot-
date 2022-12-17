@@ -1,5 +1,8 @@
 package com.example.demo.Report;
 
+import com.example.demo.Group.Group;
+import com.example.demo.GroupFile.GroupFile;
+import com.example.demo.User.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -9,9 +12,8 @@ import java.util.List;
 @Repository
 public interface ReportRepository extends JpaRepository<Report, Long> {
 
-    @Query(value = "SELECT * FROM reports r WHERE r.user_id= ?1", nativeQuery = true)
-    List<Report> getAllReportsByUserId(Long user_id);
+    List<Report> getAllByUser(User user);
 
-    @Query(value = "SELECT * FROM reports r WHERE r.group_file_id= ?1", nativeQuery = true)
-    List<Report> getAllReportsByFileId(Long file_id);
+    List<Report> getAllByGroupFile(GroupFile groupFile);
 }
+

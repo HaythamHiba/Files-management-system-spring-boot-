@@ -44,6 +44,7 @@ public class User {
     private String name;
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, orphanRemoval = true)
     private List<Group> groupList = new ArrayList<>();
+    @JsonIgnore
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, orphanRemoval = true)
     private List<Report> userReports = new ArrayList<>();
 //    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, orphanRemoval = true)

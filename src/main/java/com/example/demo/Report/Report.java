@@ -2,6 +2,7 @@ package com.example.demo.Report;
 
 import com.example.demo.GroupFile.GroupFile;
 import com.example.demo.User.User;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -29,6 +30,7 @@ public class Report {
             generator = "sequence_reports"
     )
     private Long id;
+    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "group_file.id")
     private GroupFile groupFile;

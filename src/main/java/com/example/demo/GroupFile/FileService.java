@@ -37,7 +37,7 @@ public class FileService extends BaseService {
     }
 
 
-    private final String path = "C:\\Users\\UsEr\\Desktop\\spring\\src\\static";
+    private final String path = "C:\\Users\\Amer\\Desktop\\SpringProject\\src\\static";
 
 
     public ResponseEntity<Map<String, Object>> getAll(Long id) {
