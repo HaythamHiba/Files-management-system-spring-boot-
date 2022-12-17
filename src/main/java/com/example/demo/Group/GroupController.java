@@ -2,7 +2,6 @@ package com.example.demo.Group;
 
 import com.example.demo.User.User;
 import com.example.demo.base.BaseService;
-import com.example.demo.security.UserDetailsImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -47,5 +46,10 @@ public class GroupController extends BaseService {
             @PathVariable("user_id") Long user_id
     ) {
          return this.groupService.addUserToGroup(group_id,user_id);
+    }
+
+    @GetMapping (path = "users/{group_id}")
+    public ResponseEntity<Map<String, Object>> getGroupUsers(@PathVariable("group_id") Long group_id){
+        return this.groupService.getGroupUsers(group_id);
     }
 }

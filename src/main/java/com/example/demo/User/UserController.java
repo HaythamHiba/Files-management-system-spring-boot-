@@ -28,18 +28,20 @@ public class UserController {
     }
 
 
-
     @PostMapping(path = "auth/login")
-    public ResponseEntity<Map<String,Object>>login(@Valid @RequestBody UserLoginDTO userLoginDTO){
+    public ResponseEntity<Map<String, Object>> login(@Valid @RequestBody UserLoginDTO userLoginDTO) {
 
         return this.userService.loginUser(userLoginDTO);
     }
 
     @PostMapping(path = "auth/register")
-    public ResponseEntity<Map<String,Object>>register(@Valid @RequestBody UserRegisterDto userRegisterDto){
+    public ResponseEntity<Map<String, Object>> register(@Valid @RequestBody UserRegisterDto userRegisterDto) {
 
         return this.userService.registerUser(userRegisterDto);
     }
 
-
+    @GetMapping(path = "user/groups")
+    public ResponseEntity<Map<String, Object>> getAllUserGroups() {
+        return this.userService.getAllUserGroups();
+    }
 }
