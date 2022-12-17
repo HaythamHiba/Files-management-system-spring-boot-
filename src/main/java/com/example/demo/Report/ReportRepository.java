@@ -9,9 +9,9 @@ import java.util.List;
 @Repository
 public interface ReportRepository extends JpaRepository<Report, Long> {
 
-    @Query()
+    @Query(value = "SELECT * FROM reports r WHERE r.user_id= ?1", nativeQuery = true)
     List<Report> getAllReportsByUserId(Long user_id);
 
-    @Query
+    @Query(value = "SELECT * FROM reports r WHERE r.group_file_id= ?1", nativeQuery = true)
     List<Report> getAllReportsByFileId(Long file_id);
 }
