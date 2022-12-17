@@ -13,7 +13,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
 import javax.transaction.Transactional;
-import java.sql.SQLException;
 
 
 @Aspect
@@ -42,7 +41,7 @@ public class AspectLogging {
 
     }
 
-    @Transactional(rollbackOn = SQLException.class)
+    @Transactional
 
     public Object runMethod(ProceedingJoinPoint jp) throws Throwable {
 
