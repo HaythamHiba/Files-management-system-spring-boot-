@@ -54,16 +54,6 @@ public class User {
 //    public List<Report> reportList= new ArrayList<>();
 
 
-    @OneToMany(mappedBy = "user")
-    private Set<GroupFile> groupFiles;
-
-    public Set<GroupFile> getGroupFiles() {
-        return groupFiles;
-    }
-
-    public void setGroupFiles(Set<GroupFile> groupFiles) {
-        this.groupFiles = groupFiles;
-    }
 
     @ManyToMany(
             mappedBy = "groupUsers"

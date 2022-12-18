@@ -7,6 +7,7 @@ import com.example.demo.Report.Report;
 import com.example.demo.Report.ReportRepository;
 import com.example.demo.Response.ResponseHandler;
 import com.example.demo.User.User;
+import com.example.demo.User.UserRepository;
 import com.example.demo.base.BaseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -25,14 +26,16 @@ public class FileService extends BaseService {
 
     private final FileRepository fileRepository;
     private final GroupRepositroy groupRepositroy;
-    @Autowired
-    public ReportRepository reportRepository;
+    public final ReportRepository reportRepository;
+    public final UserRepository userRepository;
 
 
     @Autowired
-    public FileService(FileRepository fileRepository, GroupRepositroy groupRepositroy) {
+    public FileService(FileRepository fileRepository, GroupRepositroy groupRepositroy, ReportRepository reportRepository, UserRepository userRepository) {
         this.fileRepository = fileRepository;
         this.groupRepositroy = groupRepositroy;
+        this.reportRepository = reportRepository;
+        this.userRepository = userRepository;
     }
 
 
@@ -120,7 +123,7 @@ public class FileService extends BaseService {
     }
 
     @Transactional
-    public ResponseEntity<Map<String, Object>> checkFiles(Long[] files) {
+    public ResponseEntity<Map<String, Object>> checkFiles(List<Long> files) {
 
             User user = getUser().getUser();
             for (Long id : files) {
@@ -128,6 +131,9 @@ public class FileService extends BaseService {
 
 
                 if (found.isPresent()) {
+
+                    List<Long> groupUsersIds = this.userRepository.getAllByGroupId(found.get().getGroupId());
+                    if(groupUsersIds.contains(getUser().getUser().getId())){
 
                     if (found.get().getFileStatus().equals(GroupFileStatus.Checked.toString())) {
 
@@ -142,7 +148,7 @@ public class FileService extends BaseService {
                         report.setType("CHECK_IN");
                         report.setLastModified(LocalDate.now());
                         reportRepository.save(report);
-                    }
+                    }}else throw new IllegalStateException("File : "+id+" Can't be checked because you are not in group");
 
 
                 } else throw new IllegalStateException("File : "+ id + "not found");
@@ -156,32 +162,37 @@ public class FileService extends BaseService {
     }
 
     @Transactional
-    public ResponseEntity<Map<String, Object>> uncheckFile(Long[] files) {
+    public ResponseEntity<Map<String, Object>> uncheckFile(List<Long> files) {
         Long userId = getUser().getUser().getId();
 
 
         for (Long id : files) {
             Optional<GroupFile> found = this.fileRepository.findById(id);
+
             if (found.isPresent()) {
 
-                if (found.get().getFileStatus().equals(GroupFileStatus.Free.toString())) {
+                List<Long> groupUsersIds = this.userRepository.getAllByGroupId(found.get().getGroupId());
+                if(groupUsersIds.contains(getUser().getUser().getId())){
+                    if (found.get().getFileStatus().equals(GroupFileStatus.Free.toString())) {
 
-                    throw new IllegalStateException("File : " +id + " is Already free");
-                } else {
-                    if (!found.get().getCheckUserId().equals(userId)) {
-                        throw new IllegalStateException("Only the user who check the file "+id+" can free it");
+                        throw new IllegalStateException("File : " +id + " is Already free");
                     } else {
+                        if (!found.get().getCheckUserId().equals(userId)) {
+                            throw new IllegalStateException("Only the user who check the file "+id+" can free it");
+                        } else {
 
-                        found.get().setFileStatus(GroupFileStatus.Free.toString());
-                        found.get().setCheckUserId(null);
-                        fileRepository.save(found.get());
-                        Report report = new Report();
-                        report.setUser(getUser().getUser());
-                        report.setType("CHECK_OUT");
-                        report.setLastModified(LocalDate.now());
-                        reportRepository.save(report);
+                            found.get().setFileStatus(GroupFileStatus.Free.toString());
+                            found.get().setCheckUserId(null);
+                            fileRepository.save(found.get());
+                            Report report = new Report();
+                            report.setUser(getUser().getUser());
+                            report.setType("CHECK_OUT");
+                            report.setLastModified(LocalDate.now());
+                            reportRepository.save(report);
+                        }
                     }
-                }
+                }else throw new IllegalStateException("File : "+id+" Can't be unchecked because you are not in group");
+
 
 
             } else throw new IllegalStateException("File "+id+" not found");

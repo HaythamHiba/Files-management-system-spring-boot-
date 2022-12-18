@@ -4,6 +4,7 @@ package com.example.demo.GroupFile;
 import com.example.demo.Report.Report;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.example.demo.User.User;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -46,12 +47,9 @@ public class GroupFile {
     @JsonIgnore
     @OneToMany(mappedBy = "groupFile", fetch = FetchType.LAZY, orphanRemoval = true)
     private List<Report> groupFileReport = new ArrayList<>();
-
-
-    @JsonIgnore
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     @ManyToOne
-    @JoinColumn(name = "userId",nullable = false)
-    private User user;
+    public User user;
 
     public User getUser() {
         return user;

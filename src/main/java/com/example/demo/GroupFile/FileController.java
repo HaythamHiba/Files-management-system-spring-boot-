@@ -33,8 +33,8 @@ public class FileController {
         return this.fileService.importFileToGroup(file, id);
     }
 
-    @PostMapping(path = "files/group/check/{files}")
-    public ResponseEntity<Map<String, Object>> checkFile(@PathVariable("files") Long[] files) throws IOException {
+    @PostMapping(path = "files/group/check")
+    public ResponseEntity<Map<String, Object>> checkFile(@RequestBody  List<Long>files) throws IOException {
         try {
 
             return this.fileService.checkFiles(files);
@@ -43,8 +43,8 @@ public class FileController {
         }
     }
 
-    @PostMapping(path = "files/group/free/{files}")
-    public ResponseEntity<Map<String, Object>> uncheckFile(@PathVariable("files") Long[] files) throws IOException {
+    @PostMapping(path = "files/group/free")
+    public ResponseEntity<Map<String, Object>> uncheckFile(@RequestBody  List<Long>files) throws IOException {
         try{
 
             return this.fileService.uncheckFile(files);
