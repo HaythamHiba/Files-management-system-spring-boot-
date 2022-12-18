@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Map;
+import java.util.Optional;
 
 @RestController
 @RequestMapping(path = "api/reports")
@@ -26,7 +27,7 @@ public class ReportController {
     }
 
     @GetMapping(path = "file/{file_id}")
-    public ResponseEntity<Map<String, Object>> getAllFileReports(@PathVariable("file_id") Long file_id) {
-        return this.reportService.getAllFileReports(file_id);
+    public Optional<Report> getAllGroupFileReports(@PathVariable("file_id") Long file_id) {
+        return this.reportService.getAllGroupFileReports(file_id);
     }
 }

@@ -6,10 +6,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
 import javax.persistence.*;
 import java.time.LocalDate;
-import java.util.Date;
 
 @Entity(name = "reports")
 @Table(
@@ -32,7 +30,7 @@ public class Report {
     private Long id;
     @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "group_file.id")
+    @JoinColumn(name = "groupFile.id")
     private GroupFile groupFile;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "users.id")
