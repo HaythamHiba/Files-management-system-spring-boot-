@@ -10,6 +10,7 @@ public class FileDTO {
     @NotNull
     private Long group_id;
     @NotNull
+
     private MultipartFile file;
 
     public FileDTO(String name, Long group_id, MultipartFile file) {

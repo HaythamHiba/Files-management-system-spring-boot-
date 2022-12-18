@@ -41,19 +41,33 @@ public class GroupService extends BaseService {
     }
 
     public ResponseEntity<Map<String, Object>> importGroup(GroupDTO groupDTO) {
-        User user = getUser().getUser();
 
-
-        Group group = new Group(groupDTO.getName(), user);
         try {
+            User user = getUser().getUser();
+            if(groupDTO.getGroupType().equals(GroupType.Private.toString())
+                &&(groupDTO.getMaxNumber() < 0 || groupDTO.getMaxNumber() == 0)
+            ){
+                throw new IllegalStateException("Group max number should be not null and more than 0");
+            }
+
+
+            Group group = new Group(
+                    groupDTO.getGroupType(),
+                    groupDTO.getMaxNumber(),
+                    groupDTO.getName(),
+                    user
+            );
+
 
             Optional<Group> found = groupRepositroy.findGroupByName(group.getName());
+
             if (found.isPresent()) {
                 throw new IllegalStateException("name is already taken");
             }
-            Group savedGroup = this.groupRepositroy.save(group);
-            this.addUserToGroup(savedGroup.getId());
-            return ResponseHandler.responseBuilder("Ok", HttpStatus.OK, savedGroup);
+            group.groupUsers.add(user);
+            this.groupRepositroy.save(group);
+
+            return ResponseHandler.responseBuilder("Ok", HttpStatus.OK, group);
 
 
         } catch (Exception e) {
@@ -73,9 +87,19 @@ public class GroupService extends BaseService {
             Group group = groupRepositroy.findById(group_id).orElseThrow(() -> new IllegalStateException("No Such Group"));
 
 
-            if (!group.getGroupUsers().contains(user)) {
-                group.groupUsers.add(user);
-                this.groupRepositroy.save(group);
+            List<Long> groupUsersIds = this.userRepository.getAllByGroupId(group_id);
+
+
+            if (
+                    !groupUsersIds.contains(user.getId())
+                    ) {
+                if(group.getGroupType().equals(GroupType.Private.toString())&&
+                        group.getGroupUsers().size()<group.getMaxNumber()
+                ){
+                    group.groupUsers.add(user);
+                    this.groupRepositroy.save(group);
+
+                }else throw new IllegalStateException("Group is full");
             } else throw new IllegalStateException("user is already in group");
 
 
@@ -89,8 +113,8 @@ public class GroupService extends BaseService {
         try {
             List<Long> groupUsersIds = this.userRepository.getAllByGroupId(group_id);
             List<User> returnArray = new ArrayList<>();
-            for (int i = 0; i < groupUsersIds.size(); i++) {
-                returnArray.add(this.userRepository.findById(groupUsersIds.get(i)).get());
+            for (Long groupUsersId : groupUsersIds) {
+                returnArray.add(this.userRepository.findById(groupUsersId).get());
             }
             return ResponseHandler.responseBuilder("OK", HttpStatus.OK, returnArray);
         } catch (Exception e) {

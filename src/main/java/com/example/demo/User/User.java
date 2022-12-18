@@ -3,13 +3,16 @@ package com.example.demo.User;
 //import com.example.demo.Report.Report;
 
 import com.example.demo.Group.Group;
+import com.example.demo.GroupFile.GroupFile;
 import com.example.demo.Report.Report;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 @Entity(name = "users")
 
@@ -49,6 +52,18 @@ public class User {
     private List<Report> userReports = new ArrayList<>();
 //    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, orphanRemoval = true)
 //    public List<Report> reportList= new ArrayList<>();
+
+
+    @OneToMany(mappedBy = "user")
+    private Set<GroupFile> groupFiles;
+
+    public Set<GroupFile> getGroupFiles() {
+        return groupFiles;
+    }
+
+    public void setGroupFiles(Set<GroupFile> groupFiles) {
+        this.groupFiles = groupFiles;
+    }
 
     @ManyToMany(
             mappedBy = "groupUsers"

@@ -1,11 +1,10 @@
 package com.example.demo.GroupFile;
 
 
-import com.example.demo.Group.Group;
 import com.example.demo.Report.Report;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.example.demo.User.User;
 import lombok.Data;
-
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -30,6 +29,7 @@ public class GroupFile {
     private String name;
     private String type;
 
+
     public Long getCheckUserId() {
         return checkUserId;
     }
@@ -47,12 +47,28 @@ public class GroupFile {
     @OneToMany(mappedBy = "groupFile", fetch = FetchType.LAZY, orphanRemoval = true)
     private List<Report> groupFileReport = new ArrayList<>();
 
-    public GroupFile(String name, String type, String path, Long groupId, String fileStatus) {
+    @JsonIgnore
+    @ManyToOne
+    @JoinColumn(name = "userId",nullable = false)
+    private User user;
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public GroupFile(String name, String type, String path, Long groupId, String fileStatus
+
+    ) {
         this.name = name;
         this.type = type;
         this.path = path;
         this.groupId = groupId;
         this.fileStatus = fileStatus;
+
     }
 
     public GroupFile() {

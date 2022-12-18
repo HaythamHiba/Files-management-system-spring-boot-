@@ -1,6 +1,5 @@
 package com.example.demo.Group;
 
-import com.example.demo.GroupFile.GroupFile;
 import com.example.demo.User.User;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -60,13 +59,24 @@ public class Group {
     @Column(name = "id", updatable = false)
     private Long id;
 
-//    public List<GroupFile> getFileList() {
-//        return fileList;
-//    }
-//
-//    public void setFileList(List<GroupFile> fileList) {
-//        this.fileList = fileList;
-//    }
+    private String groupType;
+    private Long maxNumber;
+
+    public String getGroupType() {
+        return groupType;
+    }
+
+    public void setGroupType(String groupType) {
+        this.groupType = groupType;
+    }
+
+    public Long getMaxNumber() {
+        return maxNumber;
+    }
+
+    public void setMaxNumber(Long maxNumber) {
+        this.maxNumber = maxNumber;
+    }
 
     @Column(name = "name",unique = true, nullable = false, updatable = false)
 
@@ -84,23 +94,25 @@ public class Group {
             inverseJoinColumns = @JoinColumn(name = "user_id")
     )
     public List<User> groupUsers=new ArrayList<>();
-//    @OneToMany(mappedBy = "group", fetch = FetchType.LAZY, orphanRemoval = true)
-//    public List<GroupFile> fileList= new ArrayList<>();
+
     public List<User> getGroupUsers() {
         return groupUsers;
     }
 
-    public Group(String name, User user) {
+    public Group(String groupType, Long maxNumber, String name, User user) {
+        this.groupType = groupType;
+        this.maxNumber = maxNumber;
         this.name = name;
         this.user = user;
     }
 
     @Override
     public String toString() {
-        return "Group{" +
+        return "User{" +
                 "id=" + id +
-                ", name='" + name + '\'' +
-
+                ", name='" + name+ '\'' +
+                ", groupType='" + groupType+ '\'' +
+                ", maxNumber='" + maxNumber+ '\'' +
 
                 '}';
     }

@@ -37,7 +37,7 @@ public class FileService extends BaseService {
     }
 
 
-    private final String path = "C:\\Users\\Amer\\Desktop\\SpringProject\\src\\static";
+    private final String path = "C:\\Users\\UsEr\\Desktop\\spring\\src\\static";
 
 
     public ResponseEntity<Map<String, Object>> getAll(Long id) {
@@ -65,14 +65,18 @@ public class FileService extends BaseService {
         Optional<Group> found = groupRepositroy.findById(id);
 
         try {
+
             if (found.isPresent()) {
+
                 Report report = new Report();
-                report.setGroupFile(fileRepository.save(new GroupFile(fileToImport.getOriginalFilename(),
+                GroupFile groupFile=new GroupFile(fileToImport.getOriginalFilename(),
                         fileToImport.getContentType(),
                         filePath,
                         id,
                         GroupFileStatus.Free.toString()
-                )));
+                );
+                groupFile.setUser(getUser().getUser());
+                report.setGroupFile(fileRepository.save(groupFile));
                 report.setUser(getUser().getUser());
                 report.setType("CREATE");
                 report.setLastModified(LocalDate.now());

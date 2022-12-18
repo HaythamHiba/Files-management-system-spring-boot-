@@ -1,31 +1,24 @@
 package com.example.demo.Group;
 
-import javax.persistence.Column;
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import javax.validation.constraints.NotEmpty;
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class GroupDTO {
-    @NotEmpty
+    @NotEmpty(message = "Group name is required")
 
     private String name;
+    @NotEmpty(message = "Group type is required")
+    private String groupType;
+    private Long maxNumber;
 
 
 
-    public String getName() {
-        return name;
-    }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
-
-
-    public GroupDTO() {
-    }
-
-    public GroupDTO(@NotEmpty String name) {
-        this.name = name;
-
-    }
 }
