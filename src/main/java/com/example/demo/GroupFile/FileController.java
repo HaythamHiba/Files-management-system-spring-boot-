@@ -1,11 +1,15 @@
 package com.example.demo.GroupFile;
 
+import com.example.demo.Response.ResponseHandler;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -29,14 +33,25 @@ public class FileController {
         return this.fileService.importFileToGroup(file, id);
     }
 
-    @PostMapping(path = "files/group/check/{id}")
-    public ResponseEntity<Map<String, Object>> checkFile(@PathVariable("id") Long id) throws IOException {
-        return this.fileService.checkFile(id);
+    @PostMapping(path = "files/group/check/{files}")
+    public ResponseEntity<Map<String, Object>> checkFile(@PathVariable("files") Long[] files) throws IOException {
+        try {
+
+            return this.fileService.checkFiles(files);
+        }catch (Exception e){
+            return ResponseHandler.responseBuilder(e.getMessage(), HttpStatus.FORBIDDEN, null);
+        }
     }
 
-    @PostMapping(path = "files/group/free/{id}")
-    public ResponseEntity<Map<String, Object>> uncheckFile(@PathVariable("id") Long id) throws IOException {
-        return this.fileService.uncheckFile(id);
+    @PostMapping(path = "files/group/free/{files}")
+    public ResponseEntity<Map<String, Object>> uncheckFile(@PathVariable("files") Long[] files) throws IOException {
+        try{
+
+            return this.fileService.uncheckFile(files);
+        }catch (Exception e){
+            return ResponseHandler.responseBuilder(e.getMessage(), HttpStatus.FORBIDDEN, null);
+
+        }
     }
 
     @DeleteMapping(path = "files/{id}")

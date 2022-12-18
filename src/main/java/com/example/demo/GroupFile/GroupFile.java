@@ -52,6 +52,7 @@ public class GroupFile {
     @OneToMany(mappedBy = "groupFile", fetch = FetchType.LAZY, orphanRemoval = true)
     private List<Report> groupFileReport = new ArrayList<>();
 
+
     @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "userId",nullable = false)
