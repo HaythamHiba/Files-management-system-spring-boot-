@@ -65,14 +65,18 @@ public class FileService extends BaseService {
         Optional<Group> found = groupRepositroy.findById(id);
 
         try {
+
             if (found.isPresent()) {
+
                 Report report = new Report();
-                report.setGroupFile(fileRepository.save(new GroupFile(fileToImport.getOriginalFilename(),
+                GroupFile groupFile=new GroupFile(fileToImport.getOriginalFilename(),
                         fileToImport.getContentType(),
                         filePath,
                         id,
                         GroupFileStatus.Free.toString()
-                )));
+                );
+                groupFile.setUser(getUser().getUser());
+                report.setGroupFile(fileRepository.save(groupFile));
                 report.setUser(getUser().getUser());
                 report.setType("CREATE");
                 report.setLastModified(LocalDate.now());
