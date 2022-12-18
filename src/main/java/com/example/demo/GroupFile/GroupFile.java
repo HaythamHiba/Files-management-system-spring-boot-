@@ -1,21 +1,17 @@
 package com.example.demo.GroupFile;
 
 
-import com.example.demo.Group.Group;
 import com.example.demo.Report.Report;
-import com.example.demo.User.User;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.example.demo.User.User;
 import lombok.Data;
-
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
 @Data
-
+@Table(name="group_file")
 @Entity(name = "group_file")
-@Table
 public class GroupFile {
 
 
@@ -47,7 +43,6 @@ public class GroupFile {
     @Column(nullable = false)
     private Long groupId;
     private String fileStatus;
-
     @JsonIgnore
     @OneToMany(mappedBy = "groupFile", fetch = FetchType.LAZY, orphanRemoval = true)
     private List<Report> groupFileReport = new ArrayList<>();

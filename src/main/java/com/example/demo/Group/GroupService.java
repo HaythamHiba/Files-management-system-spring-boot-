@@ -1,5 +1,7 @@
 package com.example.demo.Group;
 
+import com.example.demo.GroupFile.FileRepository;
+import com.example.demo.GroupFile.GroupFile;
 import com.example.demo.Response.ResponseHandler;
 import com.example.demo.User.User;
 import com.example.demo.User.UserRepository;
@@ -20,12 +22,15 @@ import java.util.Optional;
 public class GroupService extends BaseService {
     private final GroupRepositroy groupRepositroy;
     private final UserRepository userRepository;
+    private final FileRepository fileRepository;
 
     @Autowired
-    public GroupService(GroupRepositroy groupRepositroy, UserRepository userRepository) {
+    public GroupService(GroupRepositroy groupRepositroy, UserRepository userRepository, FileRepository fileRepository) {
         this.groupRepositroy = groupRepositroy;
         this.userRepository = userRepository;
+        this.fileRepository = fileRepository;
     }
+
 
     public ResponseEntity<Map<String, Object>> getAll() {
         return ResponseHandler.responseBuilder("OK", HttpStatus.OK, this.groupRepositroy.findAll());
@@ -114,6 +119,77 @@ public class GroupService extends BaseService {
             return ResponseHandler.responseBuilder("OK", HttpStatus.OK, returnArray);
         } catch (Exception e) {
             return ResponseHandler.responseBuilder(e.getMessage(), HttpStatus.NOT_FOUND, null);
+        }
+    }
+
+    public ResponseEntity<Map<String, Object>> deleteUserFromGroup(Long group_id, Long user_id) {
+        try {
+            Optional<Group> group = this.groupRepositroy.findById(group_id);
+            Optional<User> user = this.userRepository.findById(user_id);
+
+            if (!group.isPresent()) {
+                throw new IllegalStateException("group does not exist");
+            }
+            if (!getUser().getUser().getId().equals(group.get().getUser().getId())) {
+                throw new IllegalStateException("unauthorized");
+            }
+            if (!user.isPresent()) {
+                throw new IllegalStateException("user does not exist");
+            }
+            if (!group.get().getGroupUsers().contains(user.get())) {
+                throw new IllegalStateException("user is not in group");
+            }
+            List<GroupFile> userCheckedFiles = this.fileRepository.findAllByCheckUserIdAndGroupId(user.get().getId(), group.get().getId());
+            if (userCheckedFiles.size() != 0) {
+                throw new IllegalStateException("user has some checked in files");
+            }
+            group.get().getGroupUsers().remove(user.get());
+            return ResponseHandler.responseBuilder("OK", HttpStatus.OK, null);
+        } catch (Exception e) {
+            return ResponseHandler.responseBuilder(e.getMessage(), HttpStatus.FORBIDDEN, null);
+        }
+    }
+
+    ResponseEntity<Map<String, Object>> deleteGroup(Long group_id) {
+        try {
+            Optional<Group> group = this.groupRepositroy.findById(group_id);
+            if (!group.isPresent()) {
+                throw new IllegalStateException("group does not exist");
+            }
+            if (!getUser().getUser().getId().equals(group.get().getUser().getId())) {
+                throw new IllegalStateException("unauthorized");
+            }
+            List<GroupFile> groupFiles = this.fileRepository.findAllByGroupIdAndCheckUserIdIsNotNull(group_id);
+            if (groupFiles.size() != 0) {
+                throw new IllegalStateException("group has some checked in files");
+            }
+            this.groupRepositroy.delete(group.get());
+            return ResponseHandler.responseBuilder("OK", HttpStatus.OK, null);
+        } catch (Exception e) {
+            return ResponseHandler.responseBuilder(e.getMessage(), HttpStatus.FORBIDDEN, null);
+        }
+    }
+
+    public ResponseEntity<Map<String, Object>> addUserToGroupByAdmin(Long group_id, Long user_id) {
+        try {
+            Optional<Group> group = this.groupRepositroy.findById(group_id);
+            Optional<User> user = this.userRepository.findById(user_id);
+            if (!group.isPresent()) {
+                throw new IllegalStateException("group does not exist");
+            }
+            if (!user.isPresent()) {
+                throw new IllegalStateException("user does not exist");
+            }
+            if (group.get().getGroupUsers().contains(user.get())) {
+                throw new IllegalStateException("user already in group");
+            }
+            if (!getUser().getUser().getId().equals(group.get().getUser().getId())) {
+                throw new IllegalStateException("unauthorized");
+            }
+            group.get().getGroupUsers().add(user.get());
+            return ResponseHandler.responseBuilder("OK", HttpStatus.OK, null);
+        } catch (Exception e) {
+            return ResponseHandler.responseBuilder(e.getMessage(), HttpStatus.FORBIDDEN, null);
         }
     }
 }

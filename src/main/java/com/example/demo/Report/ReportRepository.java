@@ -13,6 +13,6 @@ public interface ReportRepository extends JpaRepository<Report, Long> {
 
     List<Report> getAllByUser(User user);
 
-    List<Report> getAllByGroupFile(GroupFile groupFile);
+
 }
 

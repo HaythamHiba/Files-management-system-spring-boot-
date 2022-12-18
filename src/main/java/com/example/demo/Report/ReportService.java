@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
+import java.util.Optional;
 
 @Service
 public class ReportService {
@@ -24,10 +25,12 @@ public class ReportService {
     }
 
     public ResponseEntity<Map<String, Object>> getAllUserReports(Long user_id) {
-        return ResponseHandler.responseBuilder("OK", HttpStatus.OK, this.reportRepository.getAllByUser(userRepository.findById(user_id).get()));
+        return ResponseHandler.responseBuilder("OK", HttpStatus.OK, this.reportRepository.getAllByUser(this.userRepository.findById(user_id).get()));
     }
 
-    public ResponseEntity<Map<String, Object>> getAllFileReports(Long file_id) {
-        return ResponseHandler.responseBuilder("OK", HttpStatus.OK, this.reportRepository.getAllByGroupFile(fileRepository.findById(file_id).get()));
+    public Optional<Report> getAllGroupFileReports(Long file_id) {
+//        List<Long> Id = this.reportRepository.getAllByGroupFileId(file_id);
+        return this.reportRepository.findById(file_id);
+//        return ResponseHandler.responseBuilder("OK", HttpStatus.OK, this.reportRepository.getAllByGroupFile(file_id));
     }
 }
