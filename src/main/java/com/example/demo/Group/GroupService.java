@@ -99,7 +99,10 @@ public class GroupService extends BaseService {
                     group.groupUsers.add(user);
                     this.groupRepositroy.save(group);
 
-                }else throw new IllegalStateException("Group is full");
+                }else if (group.getGroupType().equals(GroupType.Public.toString())){
+                    group.groupUsers.add(user);
+                    this.groupRepositroy.save(group);
+                } else throw new IllegalStateException("Group is full");
             } else throw new IllegalStateException("user is already in group");
 
 

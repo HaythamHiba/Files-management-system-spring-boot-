@@ -143,11 +143,14 @@ public class FileService extends BaseService {
                         found.get().setCheckUserId(user.getId());
                         found.get().setFileStatus(GroupFileStatus.Checked.toString());
                         fileRepository.save(found.get());
+
                         Report report = new Report();
+                        report.setGroupFile(fileRepository.save(found.get()));
                         report.setUser(getUser().getUser());
-                        report.setType("CHECK_IN");
+                        report.setType("CHECk-IN");
                         report.setLastModified(LocalDate.now());
                         reportRepository.save(report);
+
                     }}else throw new IllegalStateException("File : "+id+" Can't be checked because you are not in group");
 
 
@@ -185,8 +188,9 @@ public class FileService extends BaseService {
                             found.get().setCheckUserId(null);
                             fileRepository.save(found.get());
                             Report report = new Report();
+                            report.setGroupFile(fileRepository.save(found.get()));
                             report.setUser(getUser().getUser());
-                            report.setType("CHECK_OUT");
+                            report.setType("CHECk-OUT");
                             report.setLastModified(LocalDate.now());
                             reportRepository.save(report);
                         }
