@@ -53,6 +53,17 @@ public class User {
 //    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, orphanRemoval = true)
 //    public List<Report> reportList= new ArrayList<>();
 
+    public Set<GroupFile> getGroupFiles() {
+        return groupFiles;
+    }
+
+    public void setGroupFiles(Set<GroupFile> groupFiles) {
+        this.groupFiles = groupFiles;
+    }
+
+
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, orphanRemoval = true)
+    private Set<GroupFile> groupFiles;
 
 
     @ManyToMany(

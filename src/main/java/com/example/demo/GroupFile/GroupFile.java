@@ -47,8 +47,8 @@ public class GroupFile {
     @JsonIgnore
     @OneToMany(mappedBy = "groupFile", fetch = FetchType.LAZY, orphanRemoval = true)
     private List<Report> groupFileReport = new ArrayList<>();
-    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user.id")
     public User user;
 
     public User getUser() {
