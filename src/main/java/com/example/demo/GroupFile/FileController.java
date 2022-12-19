@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
+@RequestMapping(path = "api")
 public class FileController {
 
 
@@ -34,20 +35,20 @@ public class FileController {
     }
 
     @PostMapping(path = "files/group/check")
-    public ResponseEntity<Map<String, Object>> checkFile(@RequestBody  List<Long>files) throws IOException {
+    public ResponseEntity<Map<String, Object>> checkFile(@RequestBody  Map<String,List<Long>> body) throws IOException {
         try {
 
-            return this.fileService.checkFiles(files);
+            return this.fileService.checkFiles(body.get("files"));
         }catch (Exception e){
             return ResponseHandler.responseBuilder(e.getMessage(), HttpStatus.FORBIDDEN, null);
         }
     }
 
     @PostMapping(path = "files/group/free")
-    public ResponseEntity<Map<String, Object>> uncheckFile(@RequestBody  List<Long>files) throws IOException {
+    public ResponseEntity<Map<String, Object>> uncheckFile(@RequestBody  Map<String,List<Long>> body) throws IOException {
         try{
 
-            return this.fileService.uncheckFile(files);
+            return this.fileService.uncheckFile(body.get("files"));
         }catch (Exception e){
             return ResponseHandler.responseBuilder(e.getMessage(), HttpStatus.FORBIDDEN, null);
 

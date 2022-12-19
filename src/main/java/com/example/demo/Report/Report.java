@@ -3,6 +3,7 @@ package com.example.demo.Report;
 import com.example.demo.GroupFile.GroupFile;
 import com.example.demo.User.User;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -28,13 +29,17 @@ public class Report {
             generator = "sequence_reports"
     )
     private Long id;
-    @JsonIgnore
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "groupFile.id")
-    private GroupFile groupFile;
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "users.id")
-    private User user;
     private String type;
     private LocalDate lastModified;
+
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+
+    @ManyToOne(fetch = FetchType.LAZY)
+
+    private GroupFile groupFile;
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+
+    @ManyToOne(fetch = FetchType.LAZY)
+
+    private User user;
 }

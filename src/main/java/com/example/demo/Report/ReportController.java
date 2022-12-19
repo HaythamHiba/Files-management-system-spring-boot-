@@ -27,7 +27,7 @@ public class ReportController {
     }
 
     @GetMapping(path = "file/{file_id}")
-    public Optional<Report> getAllGroupFileReports(@PathVariable("file_id") Long file_id) {
+    public ResponseEntity<Map<String, Object>> getAllGroupFileReports(@PathVariable("file_id") Long file_id) {
         return this.reportService.getAllGroupFileReports(file_id);
     }
 }
